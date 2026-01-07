@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { Square } from './components/Square'
 import { TURNS } from './constants.js';
 import { checkWinner, checkEndGame } from './logic/board.js';
+import { saveGame, resetGameStorage } from './logic/storage/index.js';
 import { WinnerModal } from './components/WinnerModal.jsx';
 import { ResetButton } from './components/ResetButton.jsx';
 import { Board } from './components/Board.jsx';
@@ -25,9 +26,7 @@ function App() {
     setBoard(Array(9).fill(null));
     setTurn(TURNS.X);
     setWinner(null);
-
-    window.localStorage.removeItem('board');
-    window.localStorage.removeItem('turn');
+    resetGameStorage();
   }
 
 
@@ -41,9 +40,7 @@ function App() {
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
 
-    // save game
-    window.localStorage.setItem('board', JSON.stringify(newBoard));
-    window.localStorage.setItem('turn', JSON.stringify(newTurn));
+    saveGame(newBoard, newTurn); // Save the game status on the localstorage
 
     //validate winner
     const newWinner = checkWinner(newBoard);
