@@ -1,47 +1,22 @@
-import { useEffect, useState } from "react"
+import { useCatImage } from './hooks/useCatImage.js'
+import { useCatFact } from './hooks/useCatFact.js'
 
-const CAT_ENDPOINT_RANDOM_FACT = 'https://catfact.ninja/fact';
-const CAT_PREFIX_IMAGE_URL = 'https://cataas.com/';
-export function App() {
-    const [fact, setFact] = useState('');
-    const [imgUrl, setImgUrl] = useState('');
+export function App () {
+  const { fact, refreshFact } = useCatFact()
+  const { imageUrl } = useCatImage({ fact })
 
-    useEffect(() => {
+  const handleClick = async () => {
+    refreshFact()
+  }
 
-        fetch(CAT_ENDPOINT_RANDOM_FACT)
-            .then(res => res.json())
-            .then(data => {
-                const { fact } = data;
-                setFact(fact);
-                console.log('fact: ', fact);
-            });
+  return (
+    <main>
+      <h1>App de gatitos</h1>
 
-    }, [])
+      <button onClick={handleClick}>Get new fact</button>
 
-    useEffect(() => {
-
-        if (fact !== '') {
-            const firstWord = fact.split(' ')[0];
-            console.log('first word ', firstWord);
-            const CAT_ENDPOINT_IMG = `https://cataas.com/cat?json=true/says/${firstWord}?fontSize=50&fontColor=red`;
-            console.log(CAT_ENDPOINT_IMG);
-            fetch(CAT_ENDPOINT_IMG)
-                .then(res =>  res.json())
-                .then(data => {
-                    const { id } = data;
-                    const  url  = `cat/${id}/says/${firstWord}?fontSize=80&fontColor=red`;
-                    setImgUrl(url);
-                })
-                .catch(error => console.log('error getting image, more details: ', error));
-        }
-
-    }, [fact])
-
-    return (
-        <>
-            <h1>React App</h1>
-            {fact && <p>{fact}</p>}
-            {imgUrl !== '' && <img src={CAT_PREFIX_IMAGE_URL + imgUrl} alt="image extracted from the first word" />}
-        </>
-    )
+      {fact && <p>{fact}</p>}
+      {imageUrl && <img src={imageUrl} alt={`Image extracted using the first three words for ${fact}`} />}
+    </main>
+  )
 }
