@@ -1,0 +1,10 @@
+
+
+.cart input:checked ~ .cart-content {
+    display: block;
+    height: 100%;
+} 
+
+.cart input:checked ~ label {
+    position: relative !important;
+}
